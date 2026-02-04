@@ -16,6 +16,7 @@ int main(){
     const int windowHeight = 900;
 
     RenderWindow window(VideoMode(windowWidth, windowHeight), "Space Dodger");
+    Color spaceBlue(10, 10, 50);
 
     Texture playerTex, enemyTex;
     if(!playerTex.loadFromFile("player.png") || !enemyTex.loadFromFile("enemy.png")){
@@ -43,11 +44,33 @@ int main(){
     scoreText.setFillColor(Color::White);
     scoreText.setPosition(20, 20);
 
+    bool isMenu = true;
+    Text titleText("SPACE DODGER", font, 80);
+    titleText.setPosition(windowWidth/2.f - titleText.getGlobalBounds().width/2.f, 200);
+    Text startText("Press ENTER to Start", font, 50);
+    startText.setFillColor(Color::Yellow);
+    startText.setPosition(windowWidth/2.f - startText.getGlobalBounds().width/2.f, 400);
+
     while(window.isOpen()){
         Event event;
         while(window.pollEvent(event)){
             if(event.type == Event::Closed)
                 window.close();
+        }
+
+        if(isMenu){
+            if(Keyboard::isKeyPressed(Keyboard::Enter)){
+                isMenu = false;
+                score = 0;
+                enemySpeed = 0.8f;
+                enemies.clear();
+            }
+
+            window.clear(spaceBlue);
+            window.draw(titleText);
+            window.draw(startText);
+            window.display();
+            continue;
         }
 
         Vector2i mousePos = Mouse::getPosition(window);
@@ -75,7 +98,7 @@ int main(){
 
         scoreText.setString("Score: " + to_string(score));
 
-        window.clear(Color::Black);
+        window.clear(spaceBlue);
         window.draw(player);
         for(auto &e: enemies) window.draw(e);
         window.draw(scoreText);
