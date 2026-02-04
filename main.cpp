@@ -51,6 +51,12 @@ int main(){
     startText.setFillColor(Color::Yellow);
     startText.setPosition(windowWidth/2.f - startText.getGlobalBounds().width/2.f, 400);
 
+    bool isCountdown = false;
+    Clock countdownClock;
+    int countdownNumber = 3;
+    Text countdownText("", font, 120);
+    countdownText.setFillColor(Color::White);
+
     while(window.isOpen()){
         Event event;
         while(window.pollEvent(event)){
@@ -61,15 +67,41 @@ int main(){
         if(isMenu){
             if(Keyboard::isKeyPressed(Keyboard::Enter)){
                 isMenu = false;
+                isCountdown = true;
+                countdownNumber = 3;
+                countdownClock.restart();
                 score = 0;
                 enemySpeed = 0.8f;
-                enemies.clear();
-            }
-
+                enemies.clear(); 
+             }
             window.clear(spaceBlue);
             window.draw(titleText);
             window.draw(startText);
             window.display();
+            continue;
+        }
+
+        if(isCountdown){
+            float timePassed = countdownClock.getElapsedTime().asSeconds();
+            if(timePassed >= 1.f){
+                countdownNumber--;
+                countdownClock.restart();
+             if(countdownNumber > 0)
+                countdownText.setString(to_string(countdownNumber));
+             else
+                countdownText.setString("GO!");
+
+            FloatRect b = countdownText.getLocalBounds();
+            countdownText.setOrigin(b.width/2, b.height/2);
+            countdownText.setPosition(windowWidth/2.f, windowHeight/2.f);
+
+            window.clear(spaceBlue);
+            window.draw(player);
+            window.draw(countdownText);
+            window.display();
+
+            if(countdownNumber <= 0 && timePassed >= 0.6f)
+                isCountdown = false;
             continue;
         }
 
@@ -81,12 +113,11 @@ int main(){
         if(spawnClock.getElapsedTime().asSeconds() > 0.8f){
             Sprite enemy(enemyTex);
             enemy.setScale(0.3f,0.3f);
-            enemy.setPosition(rand() % windowWidth, -100);
+            enemy.setPosition(rand()%windowWidth, -100);
             enemies.push_back(enemy);
             spawnClock.restart();
         }
-
-        for(int i=0; i<enemies.size(); i++){
+for(int i=0; i<enemies.size(); i++){
             enemies[i].move(0, enemySpeed);
             if(enemies[i].getPosition().y > windowHeight){
                 enemies.erase(enemies.begin()+i);
@@ -96,14 +127,13 @@ int main(){
             }
         }
 
-        scoreText.setString("Score: " + to_string(score));
-
+       scoreText.setString("Score: "+to_string(score));
         window.clear(spaceBlue);
         window.draw(player);
         for(auto &e: enemies) window.draw(e);
         window.draw(scoreText);
         window.display();
     }
-
+    }
 return 0;
 }
