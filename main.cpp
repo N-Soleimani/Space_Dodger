@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
+#include <sstream>
 
 using namespace std;
 using namespace sf;
@@ -28,7 +29,19 @@ int main(){
 
     vector<Sprite> enemies;
     float enemySpeed = 0.8f;
+    float speedIncrement = 0.01f;
     Clock spawnClock;
+
+    Font font;
+    if(!font.loadFromFile("bitwise.ttf")){
+        cout << "Error loading font!" << endl;
+        return 1;
+    }
+
+    int score = 0;
+    Text scoreText("Score: 0", font, 30);
+    scoreText.setFillColor(Color::White);
+    scoreText.setPosition(20, 20);
 
     while(window.isOpen()){
         Event event;
@@ -39,15 +52,12 @@ int main(){
 
         Vector2i mousePos = Mouse::getPosition(window);
         player.setPosition(mousePos.x - player.getGlobalBounds().width/2.f, player.getPosition().y);
-
-        if(player.getPosition().x < 0)
-            player.setPosition(0, player.getPosition().y);
-        if(player.getPosition().x + player.getGlobalBounds().width > windowWidth)
-            player.setPosition(windowWidth - player.getGlobalBounds().width, player.getPosition().y);
+        if(player.getPosition().x < 0) player.setPosition(0, player.getPosition().y);
+        if(player.getPosition().x + player.getGlobalBounds().width > windowWidth) player.setPosition(windowWidth - player.getGlobalBounds().width, player.getPosition().y);
 
         if(spawnClock.getElapsedTime().asSeconds() > 0.8f){
             Sprite enemy(enemyTex);
-            enemy.setScale(0.3f, 0.3f);
+            enemy.setScale(0.3f,0.3f);
             enemy.setPosition(rand() % windowWidth, -100);
             enemies.push_back(enemy);
             spawnClock.restart();
@@ -57,13 +67,18 @@ int main(){
             enemies[i].move(0, enemySpeed);
             if(enemies[i].getPosition().y > windowHeight){
                 enemies.erase(enemies.begin()+i);
+                score++;
+                enemySpeed += speedIncrement;
                 i--;
             }
         }
 
+        scoreText.setString("Score: " + to_string(score));
+
         window.clear(Color::Black);
         window.draw(player);
         for(auto &e: enemies) window.draw(e);
+        window.draw(scoreText);
         window.display();
     }
 
