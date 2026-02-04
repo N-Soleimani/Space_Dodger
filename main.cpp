@@ -3,25 +3,32 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <vector>
+#include <ctime>
 
 using namespace std;
 using namespace sf;
 
 int main(){
+    srand(static_cast<unsigned>(time(0)));
     const int windowWidth = 1080;
     const int windowHeight = 900;
 
     RenderWindow window(VideoMode(windowWidth, windowHeight), "Space Dodger");
 
-    Texture playerTex;
-    if(!playerTex.loadFromFile("player.png")){
-        cout << "Error: could not load player.png" << endl;
+    Texture playerTex, enemyTex;
+    if(!playerTex.loadFromFile("player.png") || !enemyTex.loadFromFile("enemy.png")){
+        cout << "Error loading textures!" << endl;
         return 1;
     }
 
     Sprite player(playerTex);
     player.setScale(0.3f, 0.3f);
     player.setPosition(windowWidth/2.f - player.getGlobalBounds().width/2.f, windowHeight-150);
+
+    vector<Sprite> enemies;
+    float enemySpeed = 0.8f;
+    Clock spawnClock;
 
     while(window.isOpen()){
         Event event;
@@ -30,8 +37,33 @@ int main(){
                 window.close();
         }
 
+        Vector2i mousePos = Mouse::getPosition(window);
+        player.setPosition(mousePos.x - player.getGlobalBounds().width/2.f, player.getPosition().y);
+
+        if(player.getPosition().x < 0)
+            player.setPosition(0, player.getPosition().y);
+        if(player.getPosition().x + player.getGlobalBounds().width > windowWidth)
+            player.setPosition(windowWidth - player.getGlobalBounds().width, player.getPosition().y);
+
+        if(spawnClock.getElapsedTime().asSeconds() > 0.8f){
+            Sprite enemy(enemyTex);
+            enemy.setScale(0.3f, 0.3f);
+            enemy.setPosition(rand() % windowWidth, -100);
+            enemies.push_back(enemy);
+            spawnClock.restart();
+        }
+
+        for(int i=0; i<enemies.size(); i++){
+            enemies[i].move(0, enemySpeed);
+            if(enemies[i].getPosition().y > windowHeight){
+                enemies.erase(enemies.begin()+i);
+                i--;
+            }
+        }
+
         window.clear(Color::Black);
         window.draw(player);
+        for(auto &e: enemies) window.draw(e);
         window.display();
     }
 
