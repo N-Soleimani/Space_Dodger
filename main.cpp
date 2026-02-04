@@ -22,9 +22,8 @@ int main(){
         cout << "Error loading textures!" << endl;
         return 1;
     }
-
     Sprite player(playerTex);
-    player.setScale(0.3f,0.3f);
+    player.setScale(0.3f, 0.3f);
     player.setPosition(windowWidth/2.f - player.getGlobalBounds().width/2.f, windowHeight-150);
 
     vector<Sprite> enemies;
@@ -92,7 +91,7 @@ int main(){
 
         if(isCountdown){
             float timePassed = countdownClock.getElapsedTime().asSeconds();
-            if(timePassed >=1.f){ countdownNumber--; countdownClock.restart(); }
+            if(timePassed>=1.f){ countdownNumber--; countdownClock.restart(); }
             countdownText.setString(countdownNumber>0 ? to_string(countdownNumber) : "GO!");
             FloatRect b = countdownText.getLocalBounds();
             countdownText.setOrigin(b.width/2, b.height/2);
@@ -126,12 +125,12 @@ int main(){
 
         Vector2i mousePos = Mouse::getPosition(window);
         player.setPosition(mousePos.x - player.getGlobalBounds().width/2.f, player.getPosition().y);
-        if(player.getPosition().x<0) player.setPosition(0,player.getPosition().y);
+        if(player.getPosition().x<0) player.setPosition(0, player.getPosition().y);
         if(player.getPosition().x+player.getGlobalBounds().width>windowWidth) player.setPosition(windowWidth-player.getGlobalBounds().width, player.getPosition().y);
 
         if(spawnClock.getElapsedTime().asSeconds()>0.8f){
             Sprite enemy(enemyTex);
-            enemy.setScale(0.3f,0.3f);
+            enemy.setScale(0.25f,0.25f);
             enemy.setPosition(rand()%windowWidth, -100);
             enemies.push_back(enemy);
             spawnClock.restart();
