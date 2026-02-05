@@ -1,3 +1,6 @@
+// The Making of the Game Space Dodger!
+// creators: Negin Soleimani & Parya Pirhajati
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
