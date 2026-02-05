@@ -119,12 +119,13 @@ int main(){
         if(isCountdown){
             float timePassed = countdownClock.getElapsedTime().asSeconds();
 
-            if(countdownNumber > 0 && timePassed >= 1.f){
-                countdownNumber--;
-                countdownClock.restart();
-            }
-            if(countdownNumber > 0) {
-                countdownText.setString(to_string(countdownNumber));
+            if(countdownNumber > 0){
+                if(timePassed >= 1.f){
+                    countdownNumber--;
+                    countdownClock.restart();
+                }
+                if(countdownNumber > 0)
+                    countdownText.setString(to_string(countdownNumber));
             }else{
                 countdownText.setString("GO!");
                 if(timePassed >= 0.6f){
@@ -182,7 +183,10 @@ int main(){
         if(spawnClock.getElapsedTime().asSeconds() > 0.8f){
             Sprite enemy(enemyTex);
             enemy.setScale(0.3f, 0.3f);
-            enemy.setPosition(rand() % windowWidth, -100);
+            float enemyWidth  = enemy.getGlobalBounds().width;
+            float enemyHeight = enemy.getGlobalBounds().height;
+            float xPos = rand() % (windowWidth - static_cast<int>(enemyWidth));
+            enemy.setPosition(xPos, -enemyHeight);
             enemies.push_back(enemy);
             spawnClock.restart();
         }
