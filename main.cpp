@@ -153,7 +153,7 @@ int main(){
                 score = 0;
                 enemySpeed = 0.8f;
                 enemies.clear();
-                scoreSaved = false; // reset for new round
+                scoreSaved = false;
             }
 
             window.clear(spaceBlue);
