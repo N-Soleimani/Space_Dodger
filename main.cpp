@@ -36,7 +36,9 @@ vector<RoundScore> loadRoundScores(const string& filename){
 int getHighScore(const vector<RoundScore>& rounds){
     int high = 0;
     for(auto& r : rounds){
-        if (r.score > high) high = r.score;
+        if (r.score > high){
+        high = r.score;
+        }
     }
     return high;
 }
@@ -138,8 +140,9 @@ int main(){
     while(window.isOpen()){
         Event event;
         while(window.pollEvent(event)){
-            if(event.type == Event::Closed)
+            if(event.type == Event::Closed){
                 window.close();
+            }
         }
 
         // --------- MENU --------- //
@@ -224,10 +227,12 @@ int main(){
         // --------- GAME --------- //
         Vector2i mousePos = Mouse::getPosition(window);
         player.setPosition(mousePos.x - player.getGlobalBounds().width / 2.f, player.getPosition().y);
-        if(player.getPosition().x < 0)
+        if(player.getPosition().x < 0){
             player.setPosition(0, player.getPosition().y);
-        if(player.getPosition().x + player.getGlobalBounds().width > windowWidth)
+        }
+        if(player.getPosition().x + player.getGlobalBounds().width > windowWidth){
             player.setPosition(windowWidth - player.getGlobalBounds().width, player.getPosition().y);
+        }
 
         if(spawnClock.getElapsedTime().asSeconds() > 0.8f){
             Sprite enemy(enemyTex);
@@ -257,8 +262,9 @@ int main(){
         // --------- DRAW Everything --------- //
         window.clear(spaceBlue);
         window.draw(player);
-        for(auto& e : enemies)
+        for(auto& e : enemies){
             window.draw(e);
+        }
         window.draw(scoreText);
         window.draw(highScoreText);
         window.display();
